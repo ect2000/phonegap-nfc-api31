@@ -44,7 +44,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private static final String REGISTER_DEFAULT_TAG = "registerTag";
     private static final String REMOVE_DEFAULT_TAG = "removeTag";
     private static final String WRITE_TAG = "writeTag";
-    private static final String WRITE_TAG_AND_MAKE_READ_ONLY = "writeTagAndMakeReadOnly";
+    private static final String WRITE_TAG_AND_MAKE_READ_ONLY = "writeAndMakeReadOnly";
     private static final String MAKE_READ_ONLY = "makeReadOnly";
     private static final String ERASE_TAG = "eraseTag";
     private static final String SHARE_TAG = "shareTag";
@@ -151,7 +151,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             writeTag(data, callbackContext);
 
         } else if (action.equalsIgnoreCase(WRITE_TAG_AND_MAKE_READ_ONLY)) {
-            writeTagAndMakeReadOnly(data, callbackContext);
+            writeAndMakeReadOnly(data, callbackContext);
 
         } else if (action.equalsIgnoreCase(MAKE_READ_ONLY)) {
             makeReadOnly(callbackContext);
@@ -348,7 +348,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         writeNdefMessage(new NdefMessage(records), tag, callbackContext);
     }
 
-    private void writeTagAndMakeReadOnly(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    private void writeAndMakeReadOnly(JSONArray data, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {  // TODO remove this and handle LostTag
             callbackContext.error("Failed to write tag, received null intent");
         }
