@@ -448,6 +448,14 @@ var nfc = {
           cordova.exec(win, fail, "NfcPlugin", "writeTag", [ndefMessage]);
         }
     },
+     writeAndMakeReadOnly: function (ndefMessage, win, fail, options) {      
+        
+        if (cordova.platformId === "ios") {
+          cordova.exec(win, fail, "NfcPlugin", "writeTagAndMakeReadOnly", [ndefMessage, options]);        
+        } else {
+          cordova.exec(win, fail, "NfcPlugin", "writeTagAndMakeReadOnly", [ndefMessage]);
+        }
+    },
 
     makeReadOnly: function (win, fail) {
         cordova.exec(win, fail, "NfcPlugin", "makeReadOnly", []);
