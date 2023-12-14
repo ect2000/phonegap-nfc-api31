@@ -351,16 +351,55 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         NdefRecord[] records = Util.jsonToNdefRecords(data.getString(0));
-        writeNdefMessage(new NdefMessage(records), tag, callbackContext);
-        if (!ndef.isWritable()) {
-            message = "Tag is not writable";
-        } else if (ndef.canMakeReadOnly()) {
-            success = ndef.makeReadOnly();
-        } else {
-            message = "Tag can not be made read only";
-        }
+        writeNdefMessageAndMakeReacOnly(new NdefMessage(records), tag, callbackContext);
     }
+    private void writeNdefMessageAndMakeReacOnly(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
+        cordova.getThreadPool().execute(() -> {
+            try {
+                Ndef ndef = Ndef.get(tag);
+                if (ndef != null) {
+                    ndef.connect();
 
+                    if (ndef.isWritable()) {
+                        int size = message.toByteArray().length;
+                        if (ndef.getMaxSize() < size) {
+                            callbackContext.error("Tag capacity is " + ndef.getMaxSize() +
+                                    " bytes, message is " + size + " bytes.");
+                        } else {
+                            ndef.writeNdefMessage(message);
+                            callbackContext.success();
+                        }
+                    } else {
+                        callbackContext.error("Tag is read only");
+                    }
+                     if (!ndef.isWritable()) {
+                        message = "Tag is not writable";
+                    } else if (ndef.canMakeReadOnly()) {
+                        success = ndef.makeReadOnly();
+                    } else {
+                        message = "Tag can not be made read only";
+                    }
+                    ndef.close();
+                } else {
+                    NdefFormatable formatable = NdefFormatable.get(tag);
+                    if (formatable != null) {
+                        formatable.connect();
+                        formatable.formatReadOnly(message);
+                        callbackContext.success();
+                        formatable.close();
+                    } else {
+                        callbackContext.error("Tag doesn't support NDEF");
+                    }
+                }
+            } catch (FormatException e) {
+                callbackContext.error(e.getMessage());
+            } catch (TagLostException e) {
+                callbackContext.error(e.getMessage());
+            } catch (IOException e) {
+                callbackContext.error(e.getMessage());
+            }
+        });
+    }
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(() -> {
             try {
