@@ -351,9 +351,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         NdefRecord[] records = Util.jsonToNdefRecords(data.getString(0));
-        writeNdefMessageAndMakeReacOnly(new NdefMessage(records), tag, callbackContext);
+        writeNdefMessageAndMakeReadOnly(new NdefMessage(records), tag, callbackContext);
     }
-    private void writeNdefMessageAndMakeReacOnly(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
+    private void writeNdefMessageAndMakeReadOnly(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(() -> {
             try {
                 Ndef ndef = Ndef.get(tag);
