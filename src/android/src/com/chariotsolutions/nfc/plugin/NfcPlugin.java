@@ -372,12 +372,8 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                     } else {
                         callbackContext.error("Tag is read only");
                     }
-                     if (!ndef.isWritable()) {
-                        message = "Tag is not writable";
-                    } else if (ndef.canMakeReadOnly()) {
+                    if (ndef.canMakeReadOnly()) {
                         success = ndef.makeReadOnly();
-                    } else {
-                        message = "Tag can not be made read only";
                     }
                     ndef.close();
                 } else {
