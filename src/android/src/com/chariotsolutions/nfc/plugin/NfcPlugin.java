@@ -349,7 +349,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             try {
                 Ndef ndef = Ndef.get(tag);
                 if (ndef != null) {
-                    ndef.connect();
+                    if (!ndef.isConnected()) {
+                        ndef.connect();
+                    }    
 
                     if (ndef.isWritable()) {
                         int size = message.toByteArray().length;
@@ -406,8 +408,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
             try {
                 if (ndef != null) {
-
-                    ndef.connect();
+                    if (!ndef.isConnected()) {
+                        ndef.connect();
+                    }
 
                     if (!ndef.isWritable()) {
                         message = "Tag is not writable";
