@@ -351,6 +351,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
                 if (ndef != null) {
                     if (!ndef.isConnected()) {
                         ndef.connect();
+                    } else {
+                        ndef.close();
+                        ndef.connect();
                     }    
 
                     if (ndef.isWritable()) {
@@ -409,6 +412,9 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
             try {
                 if (ndef != null) {
                     if (!ndef.isConnected()) {
+                        ndef.connect();
+                    } else {
+                        ndef.close();
                         ndef.connect();
                     }
 
