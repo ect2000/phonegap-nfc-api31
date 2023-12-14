@@ -444,7 +444,7 @@ var nfc = {
         cordova.exec(win, fail, "NfcPlugin", "writeTag", [ndefMessage]);
     },
      writeAndMakeReadOnly: function (ndefMessage, win, fail, options) {      
-        cordova.exec(win, fail, "NfcPlugin", "writeTagAndMakeReadOnly", [ndefMessage]);
+        cordova.exec(win, fail, "NfcPlugin", "writeAndMakeReadOnly", [ndefMessage]);
     },
 
     makeReadOnly: function (win, fail) {
