@@ -344,17 +344,29 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
         writeNdefMessage(new NdefMessage(records), tag, callbackContext);
     }
 
+    private void writeTagAndMakeReadOnly(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {  // TODO remove this and handle LostTag
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+
+        Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        NdefRecord[] records = Util.jsonToNdefRecords(data.getString(0));
+        writeNdefMessage(new NdefMessage(records), tag, callbackContext);
+        if (!ndef.isWritable()) {
+            message = "Tag is not writable";
+        } else if (ndef.canMakeReadOnly()) {
+            success = ndef.makeReadOnly();
+        } else {
+            message = "Tag can not be made read only";
+        }
+    }
+
     private void writeNdefMessage(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(() -> {
             try {
                 Ndef ndef = Ndef.get(tag);
                 if (ndef != null) {
-                    if (!ndef.isConnected()) {
-                        ndef.connect();
-                    } else {
-                        ndef.close();
-                        ndef.connect();
-                    }    
+                    ndef.connect();
 
                     if (ndef.isWritable()) {
                         int size = message.toByteArray().length;
@@ -411,12 +423,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
 
             try {
                 if (ndef != null) {
-                    if (!ndef.isConnected()) {
-                        ndef.connect();
-                    } else {
-                        ndef.close();
-                        ndef.connect();
-                    }
+                    ndef.connect();
 
                     if (!ndef.isWritable()) {
                         message = "Tag is not writable";
