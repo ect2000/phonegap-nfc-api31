@@ -356,6 +356,7 @@ public class NfcPlugin extends CordovaPlugin implements NfcAdapter.OnNdefPushCom
     private void writeNdefMessageAndMakeReadOnly(final NdefMessage message, final Tag tag, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(() -> {
             try {
+                boolean success = false;
                 Ndef ndef = Ndef.get(tag);
                 if (ndef != null) {
                     ndef.connect();
